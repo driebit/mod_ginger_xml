@@ -3,6 +3,7 @@
 -export([
     get_node_text/1,
     get_value/2,
+    get_values/2,
     collapse_text/1
 ]).
 
@@ -40,3 +41,12 @@ get_value(Xpath, Node) ->
             %% List of text tuples
             string:strip(collapse_text(Values))
     end.
+
+get_values(Xpath, Node) ->
+    lists:foldl(
+        fun(Element = #xmlElement{name=Name, content=[#xmlText{value=Value}]}, Acc) ->
+            [{Name, Value} | Acc]
+        end,
+        [],
+        xmerl_xpath:string(Xpath, Node)
+    ).
